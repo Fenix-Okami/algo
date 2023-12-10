@@ -13,7 +13,7 @@ import regex as re
 from streamlit.components.v1 import html
 from PIL import Image
 
-from elevenlabs import Voice, VoiceSettings, generate, set_api_key
+# from elevenlabs import Voice, VoiceSettings, generate, set_api_key
 
 import tiktoken
 st.set_page_config(layout="wide")
@@ -43,7 +43,7 @@ left_co, right_co = st.columns(2)
 with left_co:
     st.image('algo.png', caption='ALGO', width=300)
 with right_co:
-    st.markdown("""*placeholder*""")
+    st.markdown("""*In ALGO's office, amidst shelves of programming books and humming computers, he's deeply engrossed in a strategy game on his screen. He frantically clicks and taps on his keybaord to issue commands to his units. Suddenly, the door opens. In an instant, a startled ALGO minimizes the game, replacing vibrant graphics with lines of code. ALGO, now fully attentive, welcomes you and invites you to have a seat*""")
 
 central_timezone = pytz.timezone('America/Chicago')
 current_time = datetime.now(central_timezone).time()
@@ -198,6 +198,10 @@ def main():
                 full_response += (response.choices[0].delta.content or "")
                 message_placeholder.markdown(full_response + "▌")
                 
+            pattern = r"'''(.*?)'''"
+            cleaned_response = re.sub(pattern, '', full_response)
+            # print(cleaned_response)
+
             ###Track token usage for awareness
             messages =          system+[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages]
             prompt_tokens =     num_tokens_from_messages(messages,gpt_model)
@@ -208,7 +212,7 @@ def main():
 
             if voice_toggle:
                 with st.spinner('Generating Audio...'):
-                    st.audio(get_audio(full_response), format='audio/mp3')
+                    st.audio(get_audio(cleaned_response), format='audio/mp3')
 
             if image_toggle:
                 with st.spinner('Generating illustration...'):
